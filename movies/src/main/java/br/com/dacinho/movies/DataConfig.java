@@ -9,25 +9,25 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-@Configuration
+//@Configuration
 public class DataConfig {
-	@Bean
-	public DataSource dataSource() {
-		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUsername("root");
-        dataSource.setPassword("");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/merdaflix");
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        return dataSource;
-	}
-	@Bean
-	public JpaVendorAdapter jpaVendorAdapter() {
-		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setDatabase(Database.MYSQL);
-		vendorAdapter.setShowSql(true);
-		vendorAdapter.setGenerateDdl(true);
-		vendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL8Dialect");
-		vendorAdapter.setPrepareConnection(true);
-		return vendorAdapter;
-	}
+//	@Bean
+//	public DataSource dataSource() {
+//		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+//        dataSource.setUsername("root");
+//        dataSource.setPassword("3volu0202");
+//        dataSource.setUrl("jdbc:mysql://localhost:3306/merdaflix");
+//        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//        return dataSource;
+//	}
+//	@Bean
+//	public JpaVendorAdapter jpaVendorAdapter() {
+//		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+//		vendorAdapter.setDatabase(Database.MYSQL);
+//		vendorAdapter.setShowSql(true);
+//		vendorAdapter.setGenerateDdl(true);
+//		vendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL8Dialect");
+//		vendorAdapter.setPrepareConnection(true);
+//		return vendorAdapter;
+//	}
 }

@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.GenericGenerator;
+
 @Entity
 public class Review implements Serializable{
 	
@@ -21,7 +23,8 @@ public class Review implements Serializable{
 	private Date date;
 	private int rating;
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
+	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 	@ManyToOne
 	private Client client;
