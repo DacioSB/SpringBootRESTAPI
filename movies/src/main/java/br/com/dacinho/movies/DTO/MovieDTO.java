@@ -32,6 +32,7 @@ public class MovieDTO {
 		return movies.stream().map(MovieDTO::new).collect(Collectors.toList());
 	}
 
+
 	
 	
 }

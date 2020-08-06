@@ -1,13 +1,15 @@
 package br.com.dacinho.movies.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
-
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -39,8 +41,10 @@ public class Genre implements Serializable{
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
-//	@ManyToMany(mappedBy="genres", cascade = {CascadeType.ALL})
-//	private List<Movie> movies = new ArrayList<>();
+	@Getter
+	@Setter
+	@ManyToMany(mappedBy="genres", fetch = FetchType.LAZY)
+	private List<Movie> movies = new ArrayList<>();
 	
 	
 }

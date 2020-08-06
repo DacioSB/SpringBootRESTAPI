@@ -7,10 +7,13 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
@@ -51,8 +54,8 @@ public class Movie implements Serializable{
 	private int year;
 	@Getter
 	@Setter
-	@ManyToMany(cascade = CascadeType.MERGE)
-	//@JoinTable(name="movie_genres", joinColumns={@JoinColumn(name="movie_id")}, inverseJoinColumns= {@JoinColumn(name="genre_id")})
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@JoinTable(name="movie_genres", joinColumns={@JoinColumn(name="movie_id")}, inverseJoinColumns= {@JoinColumn(name="genre_id")})
 	private List<Genre> genres = new ArrayList<>();
 	@Getter
 	@Setter
@@ -85,6 +88,7 @@ public class Movie implements Serializable{
 	@Getter
 	@Setter
 	private double imdbRating;
+	//TODO ta faltando o jackson do imdbrating
 	@Getter
 	@Setter
 	@Id

@@ -13,21 +13,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
+
+
 import br.com.dacinho.movies.DAO.MovieDAO;
 import br.com.dacinho.movies.models.Genre;
 import br.com.dacinho.movies.models.Movie;
 import br.com.dacinho.movies.repository.GenreRepository;
 import br.com.dacinho.movies.repository.MovieRepository;
 
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 
 @SpringBootApplication
 public class MoviesApplication {
-	private static final Logger log = LoggerFactory.getLogger(MoviesApplication.class);
 	private MovieDAO mdao = new MovieDAO();
 	@Autowired
 	private GenreRepository genreRepository;
@@ -55,11 +53,11 @@ public class MoviesApplication {
                         url, Movie.class);
     			addGenre(restTemplate, url, movie);
     			this.mdao.save(movie);
-                log.info("Resultado da Chamada REST: " + movie.toString());
     		}
             
         };
     }
+    
 	private void addGenre(RestTemplate restTemplate, String url, Movie movie)
 			throws JsonProcessingException, JsonMappingException {
 		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -71,10 +69,10 @@ public class MoviesApplication {
 			System.out.println(str);
 			System.out.println("----------");
 			Genre genreFound = this.genreRepository.findByName(str.toLowerCase().trim());
-			System.out.println(genreFound);
+			//System.out.println(genreFound);
 			if(genreFound != null) {
-				System.out.println(movie.getGenres());
 				movie.getGenres().add(genreFound);
+				System.out.println("Adicionei genero la dentro");
 			}
 		}
 	}

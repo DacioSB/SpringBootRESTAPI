@@ -19,7 +19,7 @@ public class GenresController {
 	private GenreRepository genreRepository;
 	
 	@RequestMapping("/genres")
-	public List<GenreDTO> listaGenres(){
+	public List<GenreDTO> listGenres(){
 		List<Genre> genres = genreRepository.findAll();
 		return GenreDTO.convert(genres);
 	}
