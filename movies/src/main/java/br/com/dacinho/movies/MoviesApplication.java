@@ -12,10 +12,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 
 import br.com.dacinho.movies.DAO.MovieDAO;
+import br.com.dacinho.movies.DTO.MovieFormDTO;
 import br.com.dacinho.movies.models.Genre;
 import br.com.dacinho.movies.models.Movie;
 import br.com.dacinho.movies.repository.GenreRepository;
@@ -44,38 +46,24 @@ public class MoviesApplication {
 
     @Bean
     public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
-    	String[] imdbList = {"tt6673612", "tt7975244", "tt3794354"};
+    	Map<String, Double> imdbList = new HashMap<>();
+    	imdbList.put("tt6673612", 11.90);
+    	imdbList.put("tt7975244", 11.90);
+    	imdbList.put("tt3794354", 7.90);
+    	//{"tt6673612", "tt7975244", "tt3794354"};
     	return args -> {
     		String url = "";
-    		for(String s : imdbList) {
+    		for(String s : imdbList.keySet()) {
     			url = String.format("http://www.omdbapi.com/?i=%s&plot=full&apikey=a5d7e4e8", s);
-    			Movie movie = restTemplate.getForObject(
-                        url, Movie.class);
-    			addGenre(restTemplate, url, movie);
+    			MovieFormDTO form = restTemplate.getForObject(url, MovieFormDTO.class);
+    			Movie movie = form.convert(this.genreRepository);
+    			movie.setValue(imdbList.get(s));
     			this.mdao.save(movie);
     		}
             
         };
     }
     
-	private void addGenre(RestTemplate restTemplate, String url, Movie movie)
-			throws JsonProcessingException, JsonMappingException {
-		ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(response.getBody());
-		String[] genre = root.path("Genre").asText().split(",");
-		for(String str : genre) {
-			System.out.println("!!!!!!!!!!!!!!!");
-			System.out.println(str);
-			System.out.println("----------");
-			Genre genreFound = this.genreRepository.findByName(str.toLowerCase().trim());
-			//System.out.println(genreFound);
-			if(genreFound != null) {
-				movie.getGenres().add(genreFound);
-				System.out.println("Adicionei genero la dentro");
-			}
-		}
-	}
     @Bean
     CommandLineRunner init(MovieRepository repository) {
     	List<Movie> movies = this.mdao.getMovies();

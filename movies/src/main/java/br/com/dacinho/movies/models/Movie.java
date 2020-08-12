@@ -57,6 +57,7 @@ public class Movie implements Serializable{
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	@JoinTable(name="movie_genres", joinColumns={@JoinColumn(name="movie_id")}, inverseJoinColumns= {@JoinColumn(name="genre_id")})
 	private List<Genre> genres = new ArrayList<>();
+	@JsonProperty("Rated")
 	@Getter
 	@Setter
 	private String age;
@@ -96,6 +97,20 @@ public class Movie implements Serializable{
 	@GenericGenerator(name = "native", strategy = "native")
 	private Long id;
 
+	public Movie(String title, int duration, int year, List<Genre> genres, String age, String cast, double value,
+			String linkTrailer, String linkPoster, String plot, double imdbRating) {
+		this.title = title;
+		this.duration = duration;
+		this.year = year;
+		this.genres = genres;
+		this.age = age;
+		this.cast = cast;
+		this.value = value;
+		this.linkTrailer = linkTrailer;
+		this.linkPoster = linkPoster;
+		this.plot = plot;
+		this.imdbRating = imdbRating;
+	}
 	
 	@JsonSetter("Runtime")
 	public void jSetDuration(String duration) {
@@ -105,6 +120,10 @@ public class Movie implements Serializable{
 	@JsonSetter("Year")
 	public void jSetYear(String year) {
 		this.year = Integer.parseInt(year);
+	}
+	@JsonSetter("imdbRating")
+	public void jSetimdbRating(String rating) {
+		this.imdbRating = Double.parseDouble(rating);
 	}
 	
 	public double getRating() {
@@ -121,6 +140,7 @@ public class Movie implements Serializable{
 		}
 		
 	}
+	
 
 
 	

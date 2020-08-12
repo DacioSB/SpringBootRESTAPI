@@ -4,3 +4,6 @@ INSERT INTO genre(name) VALUES("family");
 INSERT INTO genre(name) VALUES("fantasy");
 INSERT INTO genre(name) VALUES("action");
 INSERT INTO genre(name) VALUES("sci-fi");
+INSERT INTO genre(name) VALUES("Animation");
+INSERT INTO genre(name) VALUES("mystery");
+INSERT INTO genre(name) VALUES("thriller");
