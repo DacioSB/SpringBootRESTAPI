@@ -4,13 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +12,6 @@ import java.util.Map;
 
 import br.com.dacinho.movies.DAO.MovieDAO;
 import br.com.dacinho.movies.DTO.MovieFormDTO;
-import br.com.dacinho.movies.models.Genre;
 import br.com.dacinho.movies.models.Movie;
 import br.com.dacinho.movies.repository.GenreRepository;
 import br.com.dacinho.movies.repository.MovieRepository;

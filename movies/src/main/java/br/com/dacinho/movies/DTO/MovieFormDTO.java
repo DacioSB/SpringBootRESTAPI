@@ -3,6 +3,7 @@ package br.com.dacinho.movies.DTO;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
@@ -11,7 +12,7 @@ import br.com.dacinho.movies.models.Movie;
 import br.com.dacinho.movies.repository.GenreRepository;
 import lombok.Getter;
 import lombok.Setter;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MovieFormDTO {
 	
 	@JsonProperty("Title")
@@ -26,7 +27,9 @@ public class MovieFormDTO {
 	private int year;
 	@Getter
 	@Setter
+	@JsonProperty("Rated")
 	private String age;
+	@JsonProperty("Actors")
 	@Getter
 	@Setter
 	private String cast;

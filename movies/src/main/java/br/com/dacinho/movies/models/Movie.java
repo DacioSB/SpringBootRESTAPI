@@ -19,10 +19,6 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,7 +27,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -42,7 +37,6 @@ public class Movie implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@JsonProperty("Title")
 	@Getter
 	@Setter
 	private String title;
@@ -57,7 +51,6 @@ public class Movie implements Serializable{
 	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
 	@JoinTable(name="movie_genres", joinColumns={@JoinColumn(name="movie_id")}, inverseJoinColumns= {@JoinColumn(name="genre_id")})
 	private List<Genre> genres = new ArrayList<>();
-	@JsonProperty("Rated")
 	@Getter
 	@Setter
 	private String age;
@@ -65,9 +58,9 @@ public class Movie implements Serializable{
 	@Setter
 	@OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
 	private List<Review> reviews = new ArrayList<>();
-	@JsonProperty("Actors")
 	@Getter
 	@Setter
+	@Column(columnDefinition = "TEXT")
 	private String cast;
 	@Getter
 	@Setter
@@ -77,14 +70,12 @@ public class Movie implements Serializable{
 	private String linkTrailer;
 	@Getter
 	@Setter
-	@JsonProperty("Poster")
 	private String linkPoster;
 	@Setter
 	private double rating;
 	@Getter
 	@Setter
 	@Column(columnDefinition = "TEXT")
-	@JsonProperty("Plot")
 	private String plot;
 	@Getter
 	@Setter
@@ -110,20 +101,6 @@ public class Movie implements Serializable{
 		this.linkPoster = linkPoster;
 		this.plot = plot;
 		this.imdbRating = imdbRating;
-	}
-	
-	@JsonSetter("Runtime")
-	public void jSetDuration(String duration) {
-		String[] set = duration.split(" ");
-		this.duration = Integer.parseInt(set[0]);
-	}
-	@JsonSetter("Year")
-	public void jSetYear(String year) {
-		this.year = Integer.parseInt(year);
-	}
-	@JsonSetter("imdbRating")
-	public void jSetimdbRating(String rating) {
-		this.imdbRating = Double.parseDouble(rating);
 	}
 	
 	public double getRating() {
