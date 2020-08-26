@@ -60,6 +60,14 @@ public class Movie implements Serializable{
 	private List<Review> reviews = new ArrayList<>();
 	@Getter
 	@Setter
+	@ManyToMany(mappedBy="wishList", fetch = FetchType.LAZY)
+	private List<Client> clientWishList = new ArrayList<>();
+	@Getter
+	@Setter
+	@ManyToMany(mappedBy="movies", fetch = FetchType.LAZY)
+	private List<Client> clientMovies = new ArrayList<>();
+	@Getter
+	@Setter
 	@Column(columnDefinition = "TEXT")
 	private String cast;
 	@Getter
@@ -82,7 +90,6 @@ public class Movie implements Serializable{
 	private double imdbRating;
 	//TODO ta faltando o jackson do imdbrating
 	@Getter
-	@Setter
 	@Id
 	@GeneratedValue(strategy= GenerationType.AUTO,generator="native")
 	@GenericGenerator(name = "native", strategy = "native")

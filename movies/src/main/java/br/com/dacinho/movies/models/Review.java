@@ -2,11 +2,17 @@ package br.com.dacinho.movies.models;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -37,9 +43,17 @@ public class Review implements Serializable{
 	private Long id;
 	@ManyToOne
 	private Client client;
+	@ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+	@JoinTable(name="reviewlikes_clients", joinColumns={@JoinColumn(name="review_id")}, inverseJoinColumns= {@JoinColumn(name="client_id")})
+	private Set<Client> likeClients;
 	@ManyToOne
 	private Movie movie;
 	
+	public Review(String content, int rating, Date date) {
+		this.content = content;
+		this.rating = rating;
+		this.date = date;
+	}
 	public Movie getMovie() {
 		return movie;
 	}
@@ -61,8 +75,11 @@ public class Review implements Serializable{
 	public int getLikes() {
 		return likes;
 	}
-	public void setLikes(int likes) {
-		this.likes = likes;
+	public void setLikes() {
+		this.likes += 1;
+	}
+	public void dislike() {
+		this.likes -= 1;
 	}
 	public Date getDate() {
 		return date;
@@ -81,6 +98,18 @@ public class Review implements Serializable{
 	}
 	public void setClient(Client client) {
 		this.client = client;
+	}
+	public Set<Client> getLikeClients() {
+		return likeClients;
+	}
+	public void setLikeClients(Set<Client> likeClients) {
+		this.likeClients = likeClients;
+	}
+	public void removeClientLike(Client client) {
+		this.likeClients.remove(client);
+	}
+	public void addClientLike(Client client) {
+		this.likeClients.add(client);
 	}
 	
 	

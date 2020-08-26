@@ -1,13 +1,15 @@
 package br.com.dacinho.movies.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+
 
 import br.com.dacinho.movies.models.Movie;
 
 public interface MovieRepository extends JpaRepository<Movie, Long>{
-	List<Movie> findByGenres_Name(String genre);
+	Page<Movie> findByGenres_Name(String genre, Pageable pag);
+	Page<Movie> findByTitleContaining(String title, Pageable pag);
+	Page<Movie> findByClientWishList_WishList_Id(Long id, Pageable pag);
+	Page<Movie> findByClientMovies_Movies_Id(Long id, Pageable pag);
 }

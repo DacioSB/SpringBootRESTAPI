@@ -8,7 +8,15 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,8 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.dacinho.movies.DTO.DetailsMovieDTO;
 import br.com.dacinho.movies.DTO.MovieDTO;
-import br.com.dacinho.movies.DTO.MovieFormDTO;
-import br.com.dacinho.movies.DTO.UpdateMovieFormDTO;
+import br.com.dacinho.movies.DTO.form.MovieFormDTO;
+import br.com.dacinho.movies.DTO.form.UpdateMovieFormDTO;
 import br.com.dacinho.movies.models.Genre;
 import br.com.dacinho.movies.models.Movie;
 import br.com.dacinho.movies.repository.GenreRepository;
@@ -41,33 +50,55 @@ public class MoviesController {
 	private MovieRepository movieRepository;
 	@Autowired
 	private GenreRepository genreRepository;
-	
+	//@RequestParam int page, @RequestParam int qtd
+	//Lembrar de ordenar
+	//Lembrar de so pegar 6 de cada genero
 	@GetMapping
-	public List<List<MovieDTO>> listMovies(){
+	@Cacheable(value = "listMoviesGenres")
+	public List<Page<MovieDTO>> listMovies(){
+		Pageable pag = PageRequest.of(0, 3, Sort.Direction.DESC, "imdbRating");
 		List<Genre> genres = genreRepository.findAll();
-		List<List<MovieDTO>> movies = new ArrayList<>();
+		List<Page<MovieDTO>> movies = new ArrayList<>();
+		//MovieDTO.convert(g.getMovies())
 		for(Genre g : genres) {
-			movies.add(MovieDTO.convert(g.getMovies()));
+			movies.add(MovieDTO.convert(movieRepository.findByGenres_Name(g.getName(), pag)));
 		}
 		return movies;
 		
 //		List<Movie> movies = movieRepository.findAll();
 //		return MovieDTO.convert(movies);
+		//Eu deveria ter uma pagina pra cada genre
+		//E fazer paginação em cada um
+		//Se possivel ordenar pela qtd de vendas de cada filme
 	}
 	@GetMapping("/movies")
-	public List<MovieDTO> listMoviesByGenre(String genre){
+	@Cacheable(value = "listMovies")
+	public Page<MovieDTO> listMoviesByGenre(@RequestParam(required = false) String genre, @PageableDefault(sort = {"imdbRating"}, direction = Sort.Direction.DESC, page = 0, size = 10) Pageable page){
+		//Pageable pag = PageRequest.of(page, qtd, Direction.DESC, sort);
+		
+		
 		if(genre == null) {
-			List<Movie> movies = movieRepository.findAll();
+			Page<Movie> movies = movieRepository.findAll(page);
 			return MovieDTO.convert(movies);
 		}else {
 			genre = genre.trim().toLowerCase();
-			List<Movie> movies = movieRepository.findByGenres_Name(genre);
+			Page<Movie> movies = movieRepository.findByGenres_Name(genre, page);
 			return MovieDTO.convert(movies);
 		}
 		
 	}
+	@GetMapping("/search")
+	@Cacheable(value = "searchMovies")
+	public ResponseEntity<Page<MovieDTO>> searchMovies(@RequestParam String title) throws JsonMappingException, JsonProcessingException{
+		//Se for null ou vazio, retorna pra a pagina inicial
+		Pageable page = PageRequest.of(0, 10, Sort.Direction.DESC, "imdbRating");
+		Page<Movie> movies = movieRepository.findByTitleContaining(title, page);
+		return ResponseEntity.ok().body(MovieDTO.convert(movies));
+		
+	}
 	//Just for manager
 	//TODO refactor these methods which i use the jsonnode and related
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping("/register")
 	//, @RequestBody String page
 	public ResponseEntity<JsonNode> register(@RequestBody String body) throws JsonMappingException, JsonProcessingException {
@@ -95,8 +126,10 @@ public class MoviesController {
 	}
 	//Just for manager
 	//"imdb id":... "value"...
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PostMapping("/register/saveMovie")
 	@Transactional
+	@CacheEvict(value = {"listMoviesGenres", "listMovies"}, allEntries = true)
 	public ResponseEntity<MovieDTO> saveMovie(@RequestBody String body, UriComponentsBuilder uriBuilder) throws JsonMappingException, JsonProcessingException {
 		String url;
 		RestTemplate rest = new RestTemplate();
@@ -111,7 +144,7 @@ public class MoviesController {
 			movie.setValue(Double.parseDouble(actualObj.get("value").textValue()));
 			movieRepository.save(movie);
 		}
-		URI uri = uriBuilder.path("/register/saveMovie/{id}").buildAndExpand(movie.getId()).toUri();
+		URI uri = uriBuilder.path("/movies/{id}").buildAndExpand(movie.getId()).toUri();
 		return ResponseEntity.created(uri).body(new MovieDTO(movie));
 		
 	}
@@ -128,8 +161,10 @@ public class MoviesController {
 	}
 	
 	//Just for manager
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@PutMapping("/movies/{id}")
 	@Transactional
+	@CacheEvict(value = {"listMoviesGenres", "listMovies"}, allEntries = true)
 	public ResponseEntity<MovieDTO> update(@PathVariable Long id, @RequestBody UpdateMovieFormDTO movie){
 		Optional<Movie> movieOpt = this.movieRepository.findById(id);
 		//Movie updatedMovie = movie.update(id, this.movieRepository);
@@ -141,8 +176,10 @@ public class MoviesController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/movies/{id}")
 	@Transactional
+	@CacheEvict(value = {"listMoviesGenres", "listMovies"}, allEntries = true)
 	public ResponseEntity<?> remove(@PathVariable Long id){
 		Optional<Movie> movieOpt = this.movieRepository.findById(id);
 		

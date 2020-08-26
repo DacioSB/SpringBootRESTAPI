@@ -4,7 +4,10 @@ package br.com.dacinho.movies.DTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
 
 import br.com.dacinho.movies.models.Movie;
 import lombok.Getter;
@@ -30,7 +33,12 @@ public class MovieDTO {
 	public static List<MovieDTO> convert(List<Movie> movies) {
 		return movies.stream().map(MovieDTO::new).collect(Collectors.toList());
 	}
-
+	public static Set<MovieDTO> convert(Set<Movie> movies) {
+		return movies.stream().map(MovieDTO::new).collect(Collectors.toSet());
+	}
+	public static Page<MovieDTO> convert(Page<Movie> movies) {
+		return movies.map(MovieDTO::new);
+	}
 
 	
 	

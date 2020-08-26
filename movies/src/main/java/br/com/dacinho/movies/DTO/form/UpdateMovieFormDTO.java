@@ -1,4 +1,4 @@
-package br.com.dacinho.movies.DTO;
+package br.com.dacinho.movies.DTO.form;
 
 import br.com.dacinho.movies.models.Movie;
 import br.com.dacinho.movies.repository.MovieRepository;

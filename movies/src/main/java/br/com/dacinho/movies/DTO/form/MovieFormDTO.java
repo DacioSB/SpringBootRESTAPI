@@ -1,4 +1,4 @@
-package br.com.dacinho.movies.DTO;
+package br.com.dacinho.movies.DTO.form;
 
 import java.util.ArrayList;
 import java.util.List;
