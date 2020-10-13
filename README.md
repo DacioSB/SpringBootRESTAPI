@@ -1,2 +1,2 @@
 # SpringBootRESTAPI
-<h2>Training for poft lessons</h2>
+<h2>Training for psoft lessons</h2>
