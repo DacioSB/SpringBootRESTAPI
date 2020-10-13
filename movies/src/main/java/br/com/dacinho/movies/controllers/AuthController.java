@@ -27,7 +27,7 @@ public class AuthController {
 		return ResponseEntity.noContent().build();
 	}
 	
-//	@RequestMapping(value = "/forgot", method = RequestMethod.POST)
+//	@RequestMapping(value = "/forgot", method = RequestMethod.POST)haha
 //	public ResponseEntity<Void> forgot(@Valid @RequestBody EmailDTO objDto) {
 //		service.sendNewPassword(objDto.getEmail());
 //		return ResponseEntity.noContent().build();
